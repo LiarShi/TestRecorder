@@ -1,6 +1,6 @@
 # TestRecorder
 
-项目是录音功能的Demo
+安卓 录音功能的Demo项目
 
 录音功能 用了zhaolewei大佬的源码，他的源码地址：https://github.com/zhaolewei/ZlwAudioRecorder
 
