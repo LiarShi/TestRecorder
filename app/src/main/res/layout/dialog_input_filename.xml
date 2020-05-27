@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lLayout_bg"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/transparent">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/bg_flag_radius_white"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:text="保存录音"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/edit_file_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/gray_round_bg"
+            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/color_text"
+            android:textSize="15sp"
+            android:hint="请输入文件名" />
+    </LinearLayout>
+   
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="10dp"
+            android:background="#FFFFFF" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_a8aeb1" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:id="@+id/tv_cancel_dialog"
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingTop="10dp"
+                android:paddingRight="18dp"
+                android:paddingBottom="10dp"
+                android:text="取消"
+                android:textColor="@color/color_333333"
+                android:textSize="14dp" />
+
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@color/color_dcdcdc" />
+
+            <TextView
+                android:id="@+id/tv_confirm_dialog"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingTop="10dp"
+                android:paddingRight="18dp"
+                android:paddingBottom="10dp"
+                android:text="确定"
+                android:textColor="@color/colorAccent"
+                android:textSize="14dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

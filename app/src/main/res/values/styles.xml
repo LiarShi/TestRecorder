@@ -1,0 +1,21 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <!-- 基础主题 -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/color_00a0e9</item>
+        <item name="colorPrimaryDark">@color/color_00a0e9</item>
+        <item name="colorAccent">@color/color_00a0e9</item>
+    </style>
+
+    <style name="wrap_content">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="text_30_e8e8f5" parent="wrap_content">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/color_00a0e9</item>
+    </style>
+</resources>

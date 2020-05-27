@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "com.liar.testrecorder"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled = true// 启用dex分包
+   
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    //日志开关
+    def LOG_DEBUG = "LOG_DEBUG"
+    defaultConfig {
+        buildConfigField "boolean", LOG_DEBUG, "true"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    //录音
+    implementation project(path: ':recorderlib')
+
+    // 权限申请
+    implementation 'org.permissionsdispatcher:permissionsdispatcher:4.7.0'
+    annotationProcessor 'org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0'
+
+    // 组件库
+    implementation 'cn.lodz:Component:2.1.2'
+    // butterknife
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    // 下载
+    implementation 'zlc.season:rxdownload2:2.0.4'
+    //图片加载库
+    implementation 'cn.lodz:ImagerLoader:2.0.4'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //录音
+//    implementation 'com.github.zhaolewei:ZlwAudioRecorder:v1.07'
+
+}
+repositories {
+    mavenCentral()
+}

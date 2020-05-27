@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ui.MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="16dp">
+    <TextView
+        android:id="@+id/tvState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="状态：%s" />
+
+    <TextView
+        android:id="@+id/tvSoundSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="声音大小：%s" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="#666" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请选择音频格式：" />
+
+    <RadioGroup
+        android:id="@+id/rgAudioFormat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbPcm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:text=".pcm" />
+
+        <RadioButton
+            android:id="@+id/rbMp3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:checked="true"
+            android:text=".mp3" />
+
+        <RadioButton
+            android:id="@+id/rbWav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:text=".wav" />
+
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="#666" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请选择音频采样率：" />
+
+    <RadioGroup
+        android:id="@+id/rgSimpleRate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb8K"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:text="8000Hz" />
+
+        <RadioButton
+            android:id="@+id/rb16K"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:paddingEnd="20dp"
+            android:text="16000Hz" />
+
+        <RadioButton
+            android:id="@+id/rb44K"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:text="44100Hz" />
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="#666" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请选择音频位宽：" />
+
+    <RadioGroup
+        android:id="@+id/tbEncoding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb8Bit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="20dp"
+            android:text="8 Bit" />
+
+        <RadioButton
+            android:id="@+id/rb16Bit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:paddingEnd="20dp"
+            android:text="16Bit" />
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="#666" />
+
+    <Button
+        android:id="@+id/btRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="录音" />
+
+    <Button
+            android:id="@+id/btFinish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="完成" />
+    <Button
+        android:id="@+id/btStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止" />
+
+        <TextView
+            android:id="@+id/tvRecordTime"
+            style="@style/text_30_e8e8f5"
+            android:text="00:00:00" />
+
+    <com.liar.testrecorder.widget.AudioView
+        android:id="@+id/audioView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="可视化样式(上)：" />
+
+            <Spinner
+                android:id="@+id/spUpStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="可视化样式(下)：" />
+
+            <Spinner
+                android:id="@+id/spDownStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    </LinearLayout>
+
+</ScrollView>
