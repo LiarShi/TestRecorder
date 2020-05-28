@@ -5,12 +5,14 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -51,6 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +70,10 @@ public class MainActivity extends BaseActivity {
     private static final String NOTIFI_CHANNEL_DOWNLOAD_ID = "c0002";
     /** 常驻消息栏ID */
     private static final int NOTIFI_RECORDER_ID = 12345;
+
+    private static final String EXTRA_MSG_DATA = "extra_msg_data";
+    /** 通知栏完成录音 id */
+    private static final String NOTIFI_FINISH_MSG = "NOTIFI_FINISH_MSG";
 
     /**录音 **/
     @BindView(R.id.btRecord)
@@ -108,7 +115,10 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tvRecordTime)
     TextView tvRecordTime;
 
+    //更新UI循环时长
     private long duration = 1000L;
+    //延时
+    private long durationDelay = 50L;
     //录音时长
     private long  timeCounter = 0L;
 
@@ -124,6 +134,16 @@ public class MainActivity extends BaseActivity {
 
     private static final String[] STYLE_DATA = new String[]{"STYLE_ALL", "STYLE_NOTHING", "STYLE_WAVE", "STYLE_HOLLOW_LUMP"};
 
+    /**
+     * 获取PendingIntent来启动
+     * @param context 上下文
+     * @param data 数据
+     */
+    public static PendingIntent startPendingIntent(Context context,String data) {
+        Intent intent =  new Intent(context, MainActivity.class);
+        intent.putExtra(EXTRA_MSG_DATA, data);
+        return PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
 
     /**
      * 启动
@@ -194,8 +214,7 @@ public class MainActivity extends BaseActivity {
         btFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isSave=true;
-                doStop();
+                complete();
             }
         });
 
@@ -370,37 +389,11 @@ public class MainActivity extends BaseActivity {
         recordManager.setRecordResultListener(new RecordResultListener() {
             @Override
             public void onResult(File result) {
+
 //                 Toast.makeText(MainActivity.this, "录音文件： " + result.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+
                 if(isSave){//保存
-                    //命名录音文件
-                    InputFileNameDialog dialog =new InputFileNameDialog(getContext());
-                    dialog.setListener(new InputFileNameDialog.Listener() {
-                        @Override
-                        public void onCancel(Dialog dialog) {
-                            dialog.dismiss();
-                        }
-
-                        @Override
-                        public void onConfirm(Dialog dialog, String fileName) {
-                            //如果录音文件中已存在同名称的文件，展开提示
-                            if(FileUtils.isFileExists(
-                                    FileManager.getAudioFolderPath()+fileName+FileUtils.getSuffix(result.getAbsolutePath()))){
-                                showCmDialog(result,fileName);
-                            }else {
-                                //无重名直接保存
-                                if(FileUtils.renameFile(result.getAbsolutePath(),
-                                        fileName+FileUtils.getSuffix(result.getAbsolutePath()))){
-                                    ToastUtils.showShort(getContext(),"保存成功");
-                                }else {
-                                    ToastUtils.showShort(getContext(),"保存失败");
-                                }
-
-                            }
-                            dialog.dismiss();
-                            isSave=false;
-                        }
-                    });
-                    dialog.show();
+                    showInputFileNameDialog(result);
                 }else {//不保存，直接删除文件
                     FileUtils.delFile(result.getAbsolutePath());
                 }
@@ -414,6 +407,39 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    //命名录音文件 Dialog
+    private void showInputFileNameDialog(File result){
+
+        InputFileNameDialog dialog =new InputFileNameDialog(getContext());
+        dialog.setListener(new InputFileNameDialog.Listener() {
+            @Override
+            public void onCancel(Dialog dialog) {
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onConfirm(Dialog dialog, String fileName) {
+                //如果录音文件中已存在同名称的文件，展开提示
+                if(FileUtils.isFileExists(
+                        FileManager.getAudioFolderPath()+fileName+FileUtils.getSuffix(result.getAbsolutePath()))){
+
+                    showCmDialog(result,fileName);
+                }else {
+                    //无重名直接保存
+                    if(FileUtils.renameFile(result.getAbsolutePath(),
+                            fileName+FileUtils.getSuffix(result.getAbsolutePath()))){
+                        ToastUtils.showShort(getContext(),"保存成功,文件保存在："+FileManager.getAudioFolderPath());
+                    }else {
+                        ToastUtils.showShort(getContext(),"保存失败");
+                    }
+
+                }
+                dialog.dismiss();
+                isSave=false;
+            }
+        });
+        dialog.show();
+    }
 
     /**文件重名Dialog **/
     public void showCmDialog(File result,String fileName){
@@ -476,6 +502,7 @@ public class MainActivity extends BaseActivity {
             btRecord.setText("暂停");
             isStart = true;
         }
+        showCustomNotify(TimeUtils.getGapTime(timeCounter));
     }
 
 
@@ -492,7 +519,7 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 updateTimer();
             }
-        }, duration, duration);
+        }, durationDelay, duration);
     }
 
     /**
@@ -573,15 +600,63 @@ public class MainActivity extends BaseActivity {
 //        builder.setDefaults(NotificationCompat.DEFAULT_ALL);//通知默认的声音 震动 呼吸灯
         builder.setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE);//统一消除声音和震动
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);//设置优先级，级别高的排在前面
+
+//        Intent intent = new Intent(getContext(), MainActivity.class);//意图跳转界面
+//        PendingIntent pIntent = PendingIntent.getActivity(this, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);//创建一个意图
+//        builder.setContentIntent(pIntent);// 将意图设置到通知上
+
+        builder.setContentIntent(MainActivity.startPendingIntent(this, ""));// 将意图设置到通知上
+
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.view_remote_notification);
         remoteViews.setImageViewResource(R.id.remoteview_icon, R.drawable.ic_launcher);
-
         remoteViews.setTextViewText(R.id.remoteview_title, String.format(Locale.getDefault(), "声音大小：%s db", mSoundSize));//设置对应id的标题
-        remoteViews.setTextViewText(R.id.remoteview_msg, "录音中·"+time);//设置对应id的内容
+        if (isStart) {
+            remoteViews.setTextViewText(R.id.remoteview_msg, "暂停中·"+time);//设置对应id的内容
+            remoteViews.setImageViewResource(R.id.imgStart, R.drawable.icon_start_record);//录音暂停
+        }else {
+            remoteViews.setTextViewText(R.id.remoteview_msg, "录音中·"+time);//设置对应id的内容
+            remoteViews.setImageViewResource(R.id.imgStart, R.drawable.icon_pause);//正在录音
+        }
+
+        PendingIntent completePIntent = MainActivity.startPendingIntent(this, NOTIFI_FINISH_MSG);//设置完成录音 PendingIntent
+        remoteViews.setOnClickPendingIntent(R.id.btnFinish,completePIntent);//设置完成录音按钮 点击事件
+
+
         builder.setContent(remoteViews);
         Notification notification = builder.build();//构建通知
         // 设置常驻 Flag
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         NotificationUtils.create(getContext()).send(NOTIFI_RECORDER_ID,notification);
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    /** 处理Intent */
+    private void handleIntent(Intent intent) {
+        if (intent == null){
+            return;
+        }
+        String data= intent.getStringExtra(EXTRA_MSG_DATA);
+        if (TextUtils.isEmpty(data)){
+            return;
+        }
+        //通知栏 完成录音按钮 事件
+        if (data.equals(NOTIFI_FINISH_MSG)){
+            complete();
+            return;
+        }
+    }
+
+    //完成录音操作
+    private void complete(){
+        isSave=true;
+        doStop();
+    }
+
+
+
 }

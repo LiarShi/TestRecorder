@@ -55,7 +55,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.MainActivity"></activity>
+        <activity android:name=".ui.MainActivity"
+            android:launchMode="singleTask">
+
+        </activity>
 
         <activity android:name=".ui.TestMainActivity"></activity>
         <!--录音服务-->

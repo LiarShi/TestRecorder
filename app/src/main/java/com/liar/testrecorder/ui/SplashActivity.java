@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.liar.testrecorder.App;
 import com.liar.testrecorder.R;
 import com.liar.testrecorder.ui.dialog.CheckDialog;
+import com.liar.testrecorder.utils.NotificationPermissionUtil;
 import com.liar.testrecorder.utils.crash.CrashHandler;
 import com.liar.testrecorder.utils.file.FileManager;
 import com.lodz.android.component.base.activity.AbsActivity;
@@ -159,7 +160,12 @@ public class SplashActivity extends AbsActivity{
         initCrashHandler();//初始化异常处理
         initACache();// 初始化缓存类
         initRxDownload(getContext());
-        jumpMainActivity();
+        // 判断是否有通知栏权限
+        if(!NotificationPermissionUtil.isNotifyEnabled(getContext())){
+            showNotificationPermissionDialog();
+        }else {
+            jumpMainActivity();
+        }
     }
 
     /** 初始化下载器 */
@@ -199,5 +205,39 @@ public class SplashActivity extends AbsActivity{
         MainActivity.start(getContext());
 //        TestMainActivity.start(getContext());
         finish();
+
+    }
+
+    // 判断是否有通知栏权限
+    private void showNotificationPermissionDialog(){
+        CheckDialog dialog = new CheckDialog(getContext());
+        dialog.setContentMsg("app需要打开通知栏权限");
+        dialog.setPositiveText("已确认", new CheckDialog.Listener() {
+            @Override
+            public void onClick(Dialog dialog) {
+                if(NotificationPermissionUtil.isNotifyEnabled(getContext())){
+                    jumpMainActivity();
+                }else {
+                    ToastUtils.showLong(getContext(),"未检测到通知栏权限开启，在设置中打开权限后重启应用");
+                    App.get().exit();
+                }
+            }
+        });
+        dialog.setNegativeText("前去确认", new CheckDialog.Listener() {
+            @Override
+            public void onClick(Dialog dialog) {
+                NotificationPermissionUtil.start(getContext());
+            }
+        });
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                ToastUtils.showShort(getContext(), R.string.splash_check_permission_cancel);
+                App.get().exit();
+            }
+        });
+        dialog.show();
     }
 }

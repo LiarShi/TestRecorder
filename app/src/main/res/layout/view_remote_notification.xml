@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_light"
+    android:background="@color/color_00a0e9"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="10dp">
@@ -16,29 +16,73 @@
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/remoteview_title"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textSize="12sp"
-            android:textStyle="bold"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/remoteview_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:text="声音大小："
+                android:textColor="@color/white"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/remoteview_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="录音中·00:00:00"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgStart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_start_record"
             android:visibility="visible"/>
 
-        <TextView
-            android:id="@+id/remoteview_msg"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/btnFinish"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:layout_weight="2"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_flag_notification_btn"
+            android:gravity="center"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icon_stop_record" />
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
