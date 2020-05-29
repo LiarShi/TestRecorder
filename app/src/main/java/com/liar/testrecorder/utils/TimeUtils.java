@@ -11,8 +11,9 @@ public class TimeUtils {
 
     public static String getGapTime(long time){
 
-        //使用中国时区的有时差28800000ms，也就是8小时，所以要先扣掉
+        //使用中国时区的有时差8小时，所以要先扣掉 对应时区的时差
         time=time-TimeZone.getDefault().getRawOffset();
+        //初始化Formatter的转换格式。
         SimpleDateFormat format =new SimpleDateFormat("HH:mm:ss");
         return format.format(time);
 //       long hours = time / (1000 * 60 * 60);
@@ -24,6 +25,7 @@ public class TimeUtils {
 //        diffTime=hours+":"+minutes;
 //       }
 //       return diffTime;
+
     }
 
 

@@ -28,6 +28,9 @@ import androidx.core.app.NotificationCompat;
 import com.liar.testrecorder.App;
 import com.liar.testrecorder.BuildConfig;
 import com.liar.testrecorder.R;
+import com.liar.testrecorder.recorder.RecordHelper;
+import com.liar.testrecorder.recorder.RecordManager;
+import com.liar.testrecorder.recorder.listener.RecordStateListener;
 import com.liar.testrecorder.ui.dialog.InputFileNameDialog;
 import com.liar.testrecorder.utils.TimeUtils;
 import com.liar.testrecorder.utils.file.FileManager;
@@ -38,13 +41,10 @@ import com.lodz.android.core.utils.FileUtils;
 import com.lodz.android.core.utils.NotificationUtils;
 import com.lodz.android.core.utils.ToastUtils;
 import com.lodz.android.core.utils.UiHandler;
-import com.zlw.main.recorderlib.RecordManager;
 import com.zlw.main.recorderlib.recorder.RecordConfig;
-import com.zlw.main.recorderlib.recorder.RecordHelper;
 import com.zlw.main.recorderlib.recorder.listener.RecordFftDataListener;
 import com.zlw.main.recorderlib.recorder.listener.RecordResultListener;
 import com.zlw.main.recorderlib.recorder.listener.RecordSoundSizeListener;
-import com.zlw.main.recorderlib.recorder.listener.RecordStateListener;
 import com.zlw.main.recorderlib.utils.Logger;
 
 import java.io.File;
@@ -66,8 +66,7 @@ public class MainActivity extends BaseActivity {
     private static final String NOTIFI_GROUP_ID = "g0001";
     /** 主频道id */
     private static final String NOTIFI_CHANNEL_MAIN_ID = "c0001";
-    /** 下载频道id */
-    private static final String NOTIFI_CHANNEL_DOWNLOAD_ID = "c0002";
+
     /** 常驻消息栏ID */
     private static final int NOTIFI_RECORDER_ID = 12345;
 
@@ -81,6 +80,7 @@ public class MainActivity extends BaseActivity {
     /**停止 **/
     @BindView(R.id.btStop)
     Button btStop;
+
     /**完成 **/
     @BindView(R.id.btFinish)
     Button btFinish;
@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity {
         initAudioView();
         initEvent();
         initRecord();
-        initNotificationChannel();
+//        initNotificationChannel();
     }
 
     @Override
@@ -473,7 +473,7 @@ public class MainActivity extends BaseActivity {
     /**停止  录音 **/
     private void doStop() {
         recordManager.stop();
-        btRecord.setText("开始");
+        btRecord.setText("开始录音");
         isPause = false;
         isStart = false;
         stopTimer();
@@ -488,7 +488,7 @@ public class MainActivity extends BaseActivity {
     private void doPlay() {
         if (isStart) {
             recordManager.pause();
-            btRecord.setText("开始");
+            btRecord.setText("开始录音");
             isPause = true;
             isStart = false;
             stopTimer();
@@ -499,10 +499,10 @@ public class MainActivity extends BaseActivity {
                 recordManager.start();
             }
             startTimer();
-            btRecord.setText("暂停");
+            btRecord.setText("暂停录音");
             isStart = true;
         }
-        showCustomNotify(TimeUtils.getGapTime(timeCounter));
+//        showCustomNotify(TimeUtils.getGapTime(timeCounter));
     }
 
 
@@ -543,7 +543,7 @@ public class MainActivity extends BaseActivity {
                 timeCounter += duration;
                 tvRecordTime.setText
                         (TimeUtils.getGapTime(timeCounter));
-                showCustomNotify(TimeUtils.getGapTime(timeCounter));
+//                showCustomNotify(TimeUtils.getGapTime(timeCounter));
             }
         });
     }
@@ -601,21 +601,22 @@ public class MainActivity extends BaseActivity {
         builder.setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE);//统一消除声音和震动
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);//设置优先级，级别高的排在前面
 
+        //常规写法
 //        Intent intent = new Intent(getContext(), MainActivity.class);//意图跳转界面
 //        PendingIntent pIntent = PendingIntent.getActivity(this, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);//创建一个意图
 //        builder.setContentIntent(pIntent);// 将意图设置到通知上
-
+        // 简洁写法
         builder.setContentIntent(MainActivity.startPendingIntent(this, ""));// 将意图设置到通知上
 
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.view_remote_notification);
         remoteViews.setImageViewResource(R.id.remoteview_icon, R.drawable.ic_launcher);
         remoteViews.setTextViewText(R.id.remoteview_title, String.format(Locale.getDefault(), "声音大小：%s db", mSoundSize));//设置对应id的标题
         if (isStart) {
-            remoteViews.setTextViewText(R.id.remoteview_msg, "暂停中·"+time);//设置对应id的内容
-            remoteViews.setImageViewResource(R.id.imgStart, R.drawable.icon_start_record);//录音暂停
-        }else {
             remoteViews.setTextViewText(R.id.remoteview_msg, "录音中·"+time);//设置对应id的内容
             remoteViews.setImageViewResource(R.id.imgStart, R.drawable.icon_pause);//正在录音
+        }else {
+            remoteViews.setTextViewText(R.id.remoteview_msg, "暂停中·"+time);//设置对应id的内容
+            remoteViews.setImageViewResource(R.id.imgStart, R.drawable.icon_start_record);//录音暂停
         }
 
         PendingIntent completePIntent = MainActivity.startPendingIntent(this, NOTIFI_FINISH_MSG);//设置完成录音 PendingIntent
@@ -626,7 +627,10 @@ public class MainActivity extends BaseActivity {
         Notification notification = builder.build();//构建通知
         // 设置常驻 Flag
         notification.flags = Notification.FLAG_ONGOING_EVENT;
+
+
         NotificationUtils.create(getContext()).send(NOTIFI_RECORDER_ID,notification);
+
     }
 
     @Override
