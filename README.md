@@ -2,9 +2,9 @@
 
 安卓 录音功能的Demo，实现了APP在后台和手机息屏长时间录音的功能(在Android9.0和Android 10.0手机测试通过)。
 
-录音功能 用了zhaolewei大佬的源码，他的源码地址：https://github.com/zhaolewei/ZlwAudioRecorder
+录音功能 用了zhaolewei大佬的源码，源码地址：https://github.com/zhaolewei/ZlwAudioRecorder
 
-项目框架用的是Lodz大佬的AgileDev，他的源码地址：https://github.com/LZ9/AgileDev
+项目框架用的是Lodz大佬的AgileDev，源码地址：https://github.com/LZ9/AgileDev
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
