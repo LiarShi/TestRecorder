@@ -6,16 +6,21 @@ import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
 import com.liar.testrecorder.R;
+import com.liar.testrecorder.config.Constant;
+import com.liar.testrecorder.event.RecorderEvent;
 import com.liar.testrecorder.recorder.listener.RecordStateListener;
 import com.liar.testrecorder.ui.MainActivity;
 import com.liar.testrecorder.utils.TimeUtils;
@@ -29,12 +34,16 @@ import com.zlw.main.recorderlib.recorder.listener.RecordSoundSizeListener;
 import com.zlw.main.recorderlib.utils.FileUtils;
 import com.zlw.main.recorderlib.utils.Logger;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+
+
 
 /**
  * 录音服务
@@ -80,16 +89,19 @@ public class RecordService extends Service {
     private static final String NOTIFI_FINISH_MSG = "NOTIFI_FINISH_MSG";
 
     //声音分贝
-    private int  mSoundSize = 0;
+    public int  mSoundSize = 0;
     //更新UI循环时长
     private long duration = 1000L;
     //延时
     private long durationDelay = 50L;
     //录音时长
-    private long  timeCounter = 0L;
+    public long  timeCounter = 0L;
 
     private boolean isStart = false;
     private boolean isPause = false;
+
+    // 通知栏  暂停录音和继续录音 广播
+    private RecorderReceiver recorderReceiver = new RecorderReceiver();
 
 
     public RecordService() {
@@ -338,6 +350,9 @@ public class RecordService extends Service {
         PendingIntent completePIntent = MainActivity.startPendingIntent(this, NOTIFI_FINISH_MSG);//设置完成录音 PendingIntent
         remoteViews.setOnClickPendingIntent(R.id.btnFinish,completePIntent);//设置完成录音按钮 点击事件
 
+        Intent pauseIntent = new Intent(Constant.NOTIFICATION_START_ID); //----设置通知栏 暂停或继续录音按钮 广播
+        PendingIntent pausePIntent = PendingIntent.getBroadcast(this, 0, pauseIntent, 0);
+        remoteViews.setOnClickPendingIntent(R.id.imgStart, pausePIntent);//设置暂停或继续录音 按钮ID 点击事件
 
         builder.setContent(remoteViews);
         Notification notification = builder.build();//构建通知
@@ -354,6 +369,8 @@ public class RecordService extends Service {
         super.onCreate();
         /** 初始化通知通道 */
         initNotificationChannel();
+        //注册广播
+        initRecorderReceiver();
     }
 
     @Override
@@ -362,6 +379,8 @@ public class RecordService extends Service {
         timeCounter = 0;
         //服务销毁的时候 清除通知栏
         NotificationUtils.create(this).getManager().cancel(NOTIFI_RECORDER_ID);
+        //销毁广播
+        unregisterReceiver(recorderReceiver);
     }
 
 
@@ -409,7 +428,6 @@ public class RecordService extends Service {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-
                 updateTimer();
             }
         }, durationDelay, duration);
@@ -442,9 +460,39 @@ public class RecordService extends Service {
             @Override
             public void run() {
                 timeCounter += duration;
-
                 showCustomNotify(TimeUtils.getGapTime(timeCounter));
             }
         });
+        //发送evenbus更新录音主页UI
+        EventBus.getDefault().post(new RecorderEvent("",mSoundSize,timeCounter));
     }
+
+    //注册广播
+    private void initRecorderReceiver(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.NOTIFICATION_START_ID);
+        registerReceiver(recorderReceiver, filter);
+    }
+
+
+    //接收通知栏 暂停录音和继续录音广播
+    public class RecorderReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("RecorderReceiver","接收到通知栏 暂停录音和继续录音广播");
+            //判断当前 录音状态
+            if (isStart) {
+                //录音状态就暂停
+                doPause();
+            }else {
+                //暂停状态就恢复录音
+                doResume();
+            }
+            EventBus.getDefault().post(new RecorderEvent("21321",mSoundSize,timeCounter));
+            Log.e("RecorderReceiver","发送eventbus");
+
+        }
+    }
+
 }
