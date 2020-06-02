@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.liar.testrecorder.App;
 import com.liar.testrecorder.BuildConfig;
 import com.liar.testrecorder.R;
+import com.liar.testrecorder.config.Constant;
 import com.liar.testrecorder.event.RecorderEvent;
 import com.liar.testrecorder.recorder.RecordHelper;
 import com.liar.testrecorder.recorder.RecordManager;
@@ -54,17 +55,9 @@ public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    /** 通知组id */
-    private static final String NOTIFI_GROUP_ID = "g0001";
-    /** 主频道id */
-    private static final String NOTIFI_CHANNEL_MAIN_ID = "c0001";
 
-    /** 常驻消息栏ID */
-    private static final int NOTIFI_RECORDER_ID = 12345;
 
-    private static final String EXTRA_MSG_DATA = "extra_msg_data";
-    /** 通知栏完成录音 id */
-    private static final String NOTIFI_FINISH_MSG = "NOTIFI_FINISH_MSG";
+
 
     /**录音 **/
     @BindView(R.id.btRecord)
@@ -133,7 +126,7 @@ public class MainActivity extends BaseActivity {
      */
     public static PendingIntent startPendingIntent(Context context,String data) {
         Intent intent =  new Intent(context, MainActivity.class);
-        intent.putExtra(EXTRA_MSG_DATA, data);
+        intent.putExtra(Constant.EXTRA_MSG_DATA, data);
         return PendingIntent.getActivity(context, UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
@@ -470,7 +463,7 @@ public class MainActivity extends BaseActivity {
         timeCounter = 0;
         tvRecordTime.setText
                 ("00:00:00");
-        NotificationUtils.create(getContext()).getManager().cancel(NOTIFI_RECORDER_ID);
+        NotificationUtils.create(getContext()).getManager().cancel(Constant.NOTIFI_RECORDER_ID);
 
     }
 
@@ -512,12 +505,12 @@ public class MainActivity extends BaseActivity {
         if (intent == null){
             return;
         }
-        String data= intent.getStringExtra(EXTRA_MSG_DATA);
+        String data= intent.getStringExtra(Constant.EXTRA_MSG_DATA);
         if (TextUtils.isEmpty(data)){
             return;
         }
         //通知栏 完成录音按钮 事件
-        if (data.equals(NOTIFI_FINISH_MSG)){
+        if (data.equals(Constant.NOTIFI_FINISH_MSG)){
             complete();
             return;
         }

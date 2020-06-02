@@ -74,19 +74,7 @@ public class RecordService extends Service {
     private final static String PARAM_PATH = "path";
 
 
-    /** 通知组配置 */
 
-    /** 通知组id */
-    private static final String NOTIFI_GROUP_ID = "g0001";
-    /** 主频道id */
-    private static final String NOTIFI_CHANNEL_MAIN_ID = "c0001";
-
-    /** 常驻消息栏ID */
-    private static final int NOTIFI_RECORDER_ID = 12345;
-
-    private static final String EXTRA_MSG_DATA = "extra_msg_data";
-    /** 通知栏完成录音 id */
-    private static final String NOTIFI_FINISH_MSG = "NOTIFI_FINISH_MSG";
 
     //声音分贝
     public int  mSoundSize = 0;
@@ -286,7 +274,7 @@ public class RecordService extends Service {
     /** 初始化通知通道 */
     private void initNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannelGroup group = new NotificationChannelGroup(NOTIFI_GROUP_ID, "通知组");
+            NotificationChannelGroup group = new NotificationChannelGroup(Constant.NOTIFI_GROUP_ID, "通知组");
             NotificationUtils.create(this).createNotificationChannelGroup(group);// 设置通知组
             List<NotificationChannel> channels = new ArrayList<>();
             channels.add(getMainChannel());
@@ -300,7 +288,7 @@ public class RecordService extends Service {
     private NotificationChannel getMainChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-            NotificationChannel channel = new NotificationChannel(NOTIFI_CHANNEL_MAIN_ID, "主通知",
+            NotificationChannel channel = new NotificationChannel(Constant.NOTIFI_CHANNEL_MAIN_ID, "主通知",
                     NotificationManager.IMPORTANCE_LOW);//IMPORTANCE_LOW 开启通知，不会弹出，不发出提示音，状态栏中显示
 
             channel.enableLights(true);// 开启指示灯，如果设备有的话。
@@ -308,7 +296,7 @@ public class RecordService extends Service {
             channel.setDescription("应用主通知频道");// 通道描述
 //            channel.enableVibration(false);// 开启震动
 //            channel.setVibrationPattern(new long[]{100, 200, 400, 300, 100});// 设置震动频率
-            channel.setGroup(NOTIFI_GROUP_ID);
+            channel.setGroup(Constant.NOTIFI_GROUP_ID);
             channel.canBypassDnd();// 检测是否绕过免打扰模式
             channel.setBypassDnd(true);// 设置绕过免打扰模式
             channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
@@ -321,7 +309,7 @@ public class RecordService extends Service {
 
     /** 自定义内容样式 */
     private void showCustomNotify(String time) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFI_CHANNEL_MAIN_ID);// 获取构造器
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constant.NOTIFI_CHANNEL_MAIN_ID);// 获取构造器
         builder.setTicker("录音Demo");// 通知栏显示的文字
         builder.setAutoCancel(false);// 设置为true，点击该条通知会自动删除，false时只能通过滑动来删除（一般都是true）
         builder.setSmallIcon(R.drawable.ic_launcher);//通知上面的小图标（必传）
@@ -347,7 +335,7 @@ public class RecordService extends Service {
             remoteViews.setImageViewResource(R.id.imgStart, R.drawable.icon_start_record);//录音暂停
         }
 
-        PendingIntent completePIntent = MainActivity.startPendingIntent(this, NOTIFI_FINISH_MSG);//设置完成录音 PendingIntent
+        PendingIntent completePIntent = MainActivity.startPendingIntent(this, Constant.NOTIFI_FINISH_MSG);//设置完成录音 PendingIntent
         remoteViews.setOnClickPendingIntent(R.id.btnFinish,completePIntent);//设置完成录音按钮 点击事件
 
         Intent pauseIntent = new Intent(Constant.NOTIFICATION_START_ID); //----设置通知栏 暂停或继续录音按钮 广播
@@ -359,9 +347,9 @@ public class RecordService extends Service {
         // 设置常驻 Flag
         notification.flags = Notification.FLAG_ONGOING_EVENT;
 
-        NotificationUtils.create(this).send(NOTIFI_RECORDER_ID,notification);
+        NotificationUtils.create(this).send(Constant.NOTIFI_RECORDER_ID,notification);
        // 将Service转成前台服务，规避Android9.0系统禁止闲置APP在后台或息屏时使用麦克风的问题
-        startForeground(NOTIFI_RECORDER_ID,notification);
+        startForeground(Constant.NOTIFI_RECORDER_ID,notification);
     }
 
     @Override
@@ -378,7 +366,7 @@ public class RecordService extends Service {
         super.onDestroy();
         timeCounter = 0;
         //服务销毁的时候 清除通知栏
-        NotificationUtils.create(this).getManager().cancel(NOTIFI_RECORDER_ID);
+        NotificationUtils.create(this).getManager().cancel(Constant.NOTIFI_RECORDER_ID);
         //销毁广播
         unregisterReceiver(recorderReceiver);
     }
@@ -414,7 +402,7 @@ public class RecordService extends Service {
         stopTimer();
         timeCounter = 0;
         //清除通知栏
-        NotificationUtils.create(this).getManager().cancel(NOTIFI_RECORDER_ID);
+        NotificationUtils.create(this).getManager().cancel(Constant.NOTIFI_RECORDER_ID);
     }
 
 
@@ -437,6 +425,7 @@ public class RecordService extends Service {
      * 停止计时
      */
     private void stopTimer() {
+
         if (timer != null) {
             timer.cancel();
             timer.purge();
