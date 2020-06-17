@@ -4,6 +4,30 @@
     package="com.liar.testrecorder">
 
     <!-- 在SDCard中创建与删除文件权限 -->
+
+    <!-- 允许读取手机信息权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 写存储 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 读存储 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- ********************* 需要申请（只要同组有一个授权整组的权限都可以使用） ********************* -->
+
+    <!-- 相机 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- 读录音储 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 前台通知 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -42,18 +66,6 @@
             android:name=".recorder.RecordService"
             android:enabled="true"
             android:exported="false" />
-    </application> <!-- 前台通知 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- ********************* 需要申请（只要同组有一个授权整组的权限都可以使用） ********************* -->
-    <!-- 相机 -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- 允许读取手机信息权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 写存储 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读存储 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 读录音储 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 前台通知 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-    <uses-permission
-        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
-        tools:ignore="ProtectedPermissions" />
+    </application>
 
 </manifest>

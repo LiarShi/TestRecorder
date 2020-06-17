@@ -2,12 +2,12 @@ package com.liar.testrecorder.recorder;
 
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.liar.testrecorder.recorder.listener.RecordStateListener;
 import com.liar.testrecorder.recorder.mp3.Mp3EncodeThread;
+import com.liar.testrecorder.utils.file.FileManager;
 import com.zlw.main.recorderlib.recorder.RecordConfig;
 import com.zlw.main.recorderlib.recorder.listener.RecordDataListener;
 import com.zlw.main.recorderlib.recorder.listener.RecordFftDataListener;
@@ -458,12 +458,13 @@ public class RecordHelper {
      * 实例 record_20160101_13_15_12
      */
     private String getTempFilePath() {
-        String fileDir = String.format(Locale.getDefault(), "%s/TestDemo/", Environment.getExternalStorageDirectory().getAbsolutePath());
-        if (!FileUtils.createOrExistsDir(fileDir)) {
-            Logger.e(TAG, "文件夹创建失败：%s", fileDir);
-        }
+//        String fileDir = String.format(Locale.getDefault(), "%s/TestDemo/", Environment.getExternalStorageDirectory().getAbsolutePath());
+//        String fileDir = String.format(Locale.getDefault(), "%s/TestDemo/", Environment.getExternalStorageDirectory().getAbsolutePath());
+//        if (!FileUtils.createOrExistsDir(fileDir)) {
+//            Logger.e(TAG, "文件夹创建失败：%s", fileDir);
+//        }
         String fileName = String.format(Locale.getDefault(), "record_tmp_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
-        return String.format(Locale.getDefault(), "%s%s.pcm", fileDir, fileName);
+        return String.format(Locale.getDefault(), "%s%s.pcm", FileManager.getCacheFolderPath(), fileName);
     }
 
     /**
